@@ -7,7 +7,7 @@ export type ExtraParams = {
   minHorizontalGap?: number;
 
   // Vertical space in pixels between a parent and its children. Notice this is
-  // not a minimum, since all blocks in vom have fixed height.
+  // not a minimum, since all blocks have fixed height.
   verticalGap?: number;
 
   // Vertical space in pixels between a conditional and its children. It is in a
