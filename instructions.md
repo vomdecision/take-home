@@ -76,7 +76,7 @@ focus) or ConfigFrontend (backend focus) from the scope.
 
 1. You can use whatever technology you want. Notice that, to make the test a bit
    lighter, we provide a Typescript + React skeleton on the backend dir you can
-   start with or change as you wish. See [backend\README.md](backend\README.md)
+   start with or change as you wish. See [backend/README.md](backend/README.md)
    for more info.
 2. The user can design their policy by placing components on the diagram: a
    START block, one or more conditional blocks and END blocks.
