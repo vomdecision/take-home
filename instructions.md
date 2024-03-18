@@ -27,7 +27,22 @@ into production without the help of a programmer.
 
 Here's a high level diagram of the system you must develop:
 
-<img src="system_description.svg" width="500">
+```mermaid
+graph BT
+   subgraph "Our Company"
+     CFE[Config Frontend] --> CBE
+     CBE[Config Backend] --> DB
+     DB[(Policy DB)] --> EE
+     EE[Execution Engine]
+   end
+
+   subgraph "The Customer"
+     CB[Customer Backend] --> EE
+     PC((Policy Creator)) --> CFE
+   end
+
+   style PC fill:#f9f,stroke:#333,stroke-width:2px
+```
 
 And here is an explanation:
 
@@ -44,23 +59,32 @@ And here is an explanation:
    }
    ```
 
-   The decision must be returned as JSON with a boolean field:
+   The output of the Execution Engine should be a JSON with a single numerc field named `decision`:
 
    ```json
    {
-     "decision": true
+     "decision": 1000.0
    }
    ```
 
+   For example, in a policy to decide credit limits the output of hte policy
+   will be limit, returned in the `decision`.
 2. The policy that will run to make the decision must be read from the Policy
    DB (Database).
 3. The policy creator uses their browser to access ConfigFrontend. It uses
    a block interface to draw the policy. The variables mentioned in the policy
    design are those that can be sent via REST call to the ExecutionEngine. Here
-   is an example of a policy that positively decides if `age > 18` and
-   `income > 1000`:
+   is an example policy that computes a credit limit, using values of `age`
+   and `income`:
 
-   <img src="policy_diagram.svg" width="500">
+   ```mermaid
+   graph TD
+      start(START) --> age{Age > 18}
+      age --> |no| end1(decision = 0)
+      age --> |yes| income{Age > 1000}
+      income --> |no| end2(decision = 0)
+      income --> |yes| end3(decision = 1000)
+   ```
 
 4. ConfigFrontend communicates with ConfigBackend, who stores the policy in the
    Policy DB.
@@ -83,8 +107,8 @@ focus) or ConfigFrontend (backend focus) from the scope.
 3. The conditional block must have three configurations: the name of the input
    variable that should be checked, the comparison criteria (=, <, <=, >=, or >)
    and the value to compare the variable with.
-4. The END block has only one configuration: what value to assign to the
-   `decision` in the output, True or False, when that block is reached.
+4. The END block has only one configuration: what numeric value to assign to the
+   `decision` in the output, when that block is reached.
 5. For simplicity, it is not necessary to be able to edit different policies. In
    other words, the decision engine can only make one type of decision.
 
@@ -165,7 +189,7 @@ the README.md.
 1. Remember to commit all your work.
 2. Create a git bundle file with the repository, including all your commits.
 
-   ```
+   ```bash
    cd vom-take-home
    git bundle create take-home.bundle --all
    ```
