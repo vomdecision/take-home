@@ -27,7 +27,22 @@ into production without the help of a programmer.
 
 Here's a high level diagram of the system you must develop:
 
-<img src="system_description.svg" width="500">
+```mermaid
+graph BT
+   subgraph "Our Company"
+     CFE[ConfigFrontend] --> CBE
+     CBE[ConfigBackend] --> DB
+     DB[(PolicyDB)] --> EE
+     EE[ExecutionEngine]
+   end
+
+   subgraph "The Customer"
+     CB[CustomerBackend] --> EE
+     PC((Policy Creator)) --> CFE
+   end
+
+   style PC fill:#f9f,stroke:#333,stroke-width:2px
+```
 
 And here is an explanation:
 
@@ -44,26 +59,36 @@ And here is an explanation:
    }
    ```
 
-   The decision must be returned as JSON with a boolean field:
+   The output of the Execution Engine should be a JSON with a single numeric
+   field named `decision`:
 
    ```json
    {
-     "decision": true
+     "decision": 1000.0
    }
    ```
 
-2. The policy that will run to make the decision must be read from the Policy
-   DB (Database).
-3. The policy creator uses their browser to access ConfigFrontend. It uses
-   a block interface to draw the policy. The variables mentioned in the policy
-   design are those that can be sent via REST call to the ExecutionEngine. Here
-   is an example of a policy that positively decides if `age > 18` and
-   `income > 1000`:
+   For example, in a policy to decide credit limits the output would be a the
+   limit, returned in the `decision` field.
+2. The policy that will run to make the decision must be read from the PolicyDB
+   (Database).
+3. The Policy Creator (i.e. a person) uses their browser to access
+   ConfigFrontend. The frontend shows a block interface to draw the policy. The
+   variables mentioned in the policy design are those that can be sent via REST
+   call to the ExecutionEngine. Here is an example policy that computes a credit
+   limit, using values of `age` and `income`:
 
-   <img src="policy_diagram.svg" width="500">
+   ```mermaid
+   graph TD
+      start(START) --> age{Age > 18}
+      age --> |no| end1(decision = 0)
+      age --> |yes| income{Income > 1000}
+      income --> |no| end2(decision = 0)
+      income --> |yes| end3(decision = 1000)
+   ```
 
 4. ConfigFrontend communicates with ConfigBackend, who stores the policy in the
-   Policy DB.
+   PolicyDB.
 
 ## Functional Requirements
 
@@ -75,16 +100,16 @@ focus) or ConfigFrontend (backend focus) from the scope.
 ### ConfigFrontend
 
 1. You can use whatever technology you want. Notice that, to make the test a bit
-   lighter, we provide a Typescript + React skeleton on the backend dir you can
-   start with or change as you wish. See [backend/README.md](backend/README.md)
+   lighter, we provide a Typescript + React skeleton on the frontend dir you can
+   start with or change as you wish. See [frontend/README.md](frontend/README.md)
    for more info.
 2. The user can design their policy by placing components on the diagram: a
    START block, one or more conditional blocks and END blocks.
 3. The conditional block must have three configurations: the name of the input
    variable that should be checked, the comparison criteria (=, <, <=, >=, or >)
    and the value to compare the variable with.
-4. The END block has only one configuration: what value to assign to the
-   `decision` in the output, True or False, when that block is reached.
+4. The END block has only one configuration: what numeric value to assign to the
+   `decision` field in the output, when that block is reached.
 5. For simplicity, it is not necessary to be able to edit different policies. In
    other words, the decision engine can only make one type of decision.
 
@@ -95,7 +120,7 @@ focus) or ConfigFrontend (backend focus) from the scope.
 2. You can use whatever technology you want. However, as we use Python in our
    stack, showing mastery of this language is a plus!
 
-### Policy DB
+### PolicyDB
 
 Use whichever database you prefer. You can even save the policy in a file.
 
@@ -109,16 +134,18 @@ Use whichever database you prefer. You can even save the policy in a file.
 
 ## Non-Functional Requirements
 
-1. Place all components in the same repository, starting from this one.
+1. Place all components in the same repository, starting from this repo.
 2. Write READMEs, all code, comments and UIs in English.
-3. Write a README.md justifying your main design decisions as well as giving
-   instructions on how to run the entire solution, including how to do the
-   setup.
+3. Edit the README.md on the repo root justifying your design decisions as well
+   as giving instructions on how to run the entire solution, including how to do
+   the setup. You can put all information in this file or create additional
+   README.md files in the backend and frontend dir as per your preference.
 4. Write the cleanest, clearest code you can. Remember someone else will have to
    read and understand.
 5. Document the code in such a way that a new person can quickly understand the
    codebase. At Vom we believe good code has comments, which explain the *whys*
-   behind the code.
+   behind the code, but pay attention to not add redundant comments that just
+   repeat the *how*.
 6. Write backend unit tests.
 7. Perform error handling on the backend.
 8. On the frontend, show the error messages returned by the backend.
@@ -135,7 +162,7 @@ For simplicity's sake, you don't need to worry about the following aspects:
 
 ## Grading Criteria
 
-1. Does the README explain the solution and how to run it?
+1. Does the READMEs explain the solution and how to run it?
 2. Is it possible to make the solution run quickly with little effort
    configuring the environment?
 3. Does the solution demonstrate understanding of the problem or are there
@@ -144,7 +171,7 @@ For simplicity's sake, you don't need to worry about the following aspects:
 5. How functional is the UI for policy design?
 6. Does the Execution Engine run the policy correctly?
 7. Are there serious bugs?
-8. Is the code clear well tested?
+8. Is the code clear and well tested?
 9. Are the solution as a whole and its details well documented, including code
    comments?
 10. Does the solution meet all non-functional requirements?
@@ -162,10 +189,10 @@ the README.md.
 
 ## How to Send your Response
 
-1. Remember to commit all your work.
+1. Remember to commit all your work, in small commits with good descriptions.
 2. Create a git bundle file with the repository, including all your commits.
 
-   ```
+   ```bash
    cd vom-take-home
    git bundle create take-home.bundle --all
    ```
