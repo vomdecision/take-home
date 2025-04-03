@@ -1,7 +1,7 @@
 # Vom Take-home Challenge Instructions
 
 Thank you to taking the Vom Take-home challenge! We hope you are able to create
-a nice response and learn some valuable things along the way.
+a great response and learn some valuable things along the way.
 
 To start, read this doc carefully, then clone the repo to your machine and start
 coding:
@@ -184,7 +184,16 @@ to best solve this doubt so that the challenge makes sense and document that in
 the README.md.
 2. If you find an error in the challenge specification, send an email suggesting
    the correction and consider this suggestion in your implementation.
-3. Pay close attention to non-functional requirements and check them all before
+3. Use the stack you are most comfortable with, even if it's not the one we use
+   at Vom. You want to show your best skills, and you can more easily do that
+   with tooling you are experienced in.
+4. Using GenAI is great and we use it everyday at Vom (for example ChatGPT or
+   Cursor), so we encourage you to use it as well. Notice however that at Vom we
+   have full understanding of our own code and solution, and the same will be
+   expected of you. That is, if we like your response we will call you for a
+   pair programming session, and if you can't explain all the the details of the
+   code you delivered you will not go well.
+5. Pay close attention to non-functional requirements and check them all before
    delivering the answer.
 
 ## How to Send your Response
